@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.local
+.env.production
+*.log
+dist/
+build/
+.DS_Store
+/src/generated/prisma
+.env
+.env.example
+.env
+.env.example
