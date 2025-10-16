@@ -6,6 +6,9 @@ const {
   getProfile,
   googleAuthSuccess,
   googleAuthFailure,
+  forgotPassword,
+  resetPassword,
+  changePassword,
 } = require("../controllers/authController");
 const { authenticateToken } = require("../middleware/auth");
 const {
