@@ -96,7 +96,7 @@ async function googleAuthSuccess(req, res) {
     const token = generateToken({ userId: user.id });
 
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-    const redirectUrl = `${frontendUrl}/auth/callback?token=${encodeURIComponent(
+    const redirectUrl = `${frontendUrl}/auth/callback#token=${encodeURIComponent(
       token
     )}&user=${encodeURIComponent(
       JSON.stringify({
