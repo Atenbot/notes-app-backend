@@ -96,15 +96,18 @@ async function googleAuthSuccess(req, res) {
     const token = generateToken({ userId: user.id });
 
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-    res.redirect(
-      `${frontendUrl}/auth/callback?token=${token}&user=${encodeURIComponent(
-        JSON.stringify({
-          id: user.id,
-          email: user.email,
-          name: user.name,
-        })
-      )}`
-    );
+    const redirectUrl = `${frontendUrl}/auth/callback?token=${encodeURIComponent(
+      token
+    )}&user=${encodeURIComponent(
+      JSON.stringify({
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      })
+    )}`;
+
+    console.log("Redirecting to:", redirectUrl);
+    res.redirect(redirectUrl);
   } catch (error) {
     console.error("Google auth success error:", error);
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
