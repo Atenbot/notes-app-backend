@@ -9,15 +9,10 @@ const {
   generateToken,
 } = require("../utils/auth");
 
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+const nodemailer = require("nodemailer");
 
 async function register(req, res) {
   try {
@@ -136,10 +131,7 @@ async function googleAuthFailure(req, res) {
 async function forgotPassword(req, res) {
   try {
     const { email } = req.body;
-
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
+    const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
       return res.json({
@@ -152,34 +144,28 @@ async function forgotPassword(req, res) {
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
-    const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+    const resetTokenExpiry = new Date(Date.now() + 3600000);
 
     await prisma.user.update({
       where: { id: user.id },
-      data: {
-        resetToken: resetTokenHash,
-        resetTokenExpiry,
-      },
+      data: { resetToken: resetTokenHash, resetTokenExpiry },
     });
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    await resend.emails.send({
+      from: "Aten's Notes App",
       to: email,
-      subject: "Password Reset Request - Notes App",
+      subject: "Password Reset Request",
       html: `
         <h2>Password Reset Request</h2>
-        <p>You requested a password reset. Click the link below to reset your password:</p>
+        <p>Click the link below to reset your password:</p>
         <a href="${resetUrl}">${resetUrl}</a>
-        <p>This link will expire in 1 hour.</p>
-        <p>If you didn't request this, please ignore this email.</p>
+        <p>This link expires in 1 hour.</p>
       `,
     });
 
-    res.json({
-      message: "A reset link has been sent to this email.",
-    });
+    res.json({ message: "A reset link has been sent to this email." });
   } catch (error) {
     console.error("Forgot password error:", error);
     res.status(500).json({ error: "Failed to process request" });
