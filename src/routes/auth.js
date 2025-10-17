@@ -43,4 +43,10 @@ router.get(
 
 router.get("/google/failure", googleAuthFailure);
 
+router.post("/change-password", authenticateToken, changePassword);
+
+router.post("/forgot-password", forgotPassword);
+
+router.post("/reset-password", resetPassword);
+
 module.exports = router;
