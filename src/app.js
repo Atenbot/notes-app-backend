@@ -13,17 +13,36 @@ const notesRoutes = require("./routes/notes");
 const app = express();
 
 const corsOptions = {
-  origin:
-    process.env.NODE_ENV === "production"
-      ? "https://atens-notes-app.vercel.app"
-      : ["http://localhost:5173", "http://localhost:3000"],
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "https://atens-notes-app.vercel.app",
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "http://localhost:5174",
+      "http://127.0.0.1:5173",
+    ];
+
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log("Blocked origin:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  exposedHeaders: ["Content-Length", "X-Request-Id"],
+  maxAge: 86400,
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
 };
 
-app.use(helmet());
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+app.use(helmet());
 app.use(morgan("combined"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
