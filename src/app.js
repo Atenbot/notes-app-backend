@@ -13,10 +13,10 @@ const notesRoutes = require("./routes/notes");
 const app = express();
 
 const corsOptions = {
-  origin: "*",
-  // process.env.NODE_ENV === "production"
-  //   ? [process.env.FRONTEND_URL, "http://localhost:5173"]
-  //   : ["http://localhost:5173", "http://localhost:3000"],
+  origin:
+    process.env.NODE_ENV === "production"
+      ? "https://atens-notes-app.vercel.app"
+      : ["http://localhost:5173", "http://localhost:3000"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -45,6 +45,13 @@ app.get("/api/health", (req, res) => {
     status: "OK",
     timestamp: new Date().toISOString(),
     frontend: process.env.FRONTEND_URL,
+  });
+});
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "Notes App API",
+    status: "running",
   });
 });
 

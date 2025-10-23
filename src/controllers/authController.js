@@ -101,18 +101,11 @@ async function getProfile(req, res) {
 async function googleAuthSuccess(req, res) {
   try {
     const user = req.user;
-
     const token = generateToken({ userId: user.id });
-
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-    const redirectUrl = `${frontendUrl}/auth/callback#token=${encodeURIComponent(
+
+    const redirectUrl = `${frontendUrl}/auth/callback?token=${encodeURIComponent(
       token
-    )}&user=${encodeURIComponent(
-      JSON.stringify({
-        id: user.id,
-        email: user.email,
-        name: user.name,
-      })
     )}`;
 
     res.redirect(redirectUrl);
