@@ -1,4 +1,4 @@
-const { prisma } = require("../config/database");
+import { prisma } from "../config/database.js";
 import { customAlphabet } from "nanoid";
 
 const nanoid = customAlphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZ", 6);
