@@ -1,4 +1,7 @@
 const { prisma } = require("../config/database");
+import { customAlphabet } from "nanoid";
+
+const nanoid = customAlphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZ", 6);
 
 async function getNotes(req, res) {
   try {
@@ -65,6 +68,7 @@ async function createNote(req, res) {
 
     const note = await prisma.note.create({
       data: {
+        id: nanoid(),
         title: title || null,
         content,
         tags: tags || [],
